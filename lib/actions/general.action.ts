@@ -39,7 +39,7 @@ export async function createFeedback(params: CreateFeedbackParams) {
         - **Confidence & Clarity**: Confidence in responses, engagement, and clarity.
         `,
       system:
-        "You are a professional interviewer analyzing a mock interview. Your task is to evaluate the candidate based on structured categories",
+        "You are a professional interviewer analyzing a mock interview. Your task is to evaluate the candidate based on structured categories.Your task is to evaluate. If there are no strengths found then tell it.Don't request anything from user, Just give the feedback.",
     });
 
     await dbConnect();

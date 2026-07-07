@@ -231,7 +231,7 @@ const AuthForm = ({ type }: { type: FormType }) => {
                   <button
                     type="button"
                     onClick={() => setView("forgot")}
-                    className="text-sm text-user-primary hover:underline float-right"
+                    className="text-sm text-primary hover:underline float-right"
                   >
                     Forgot password?
                   </button>
@@ -282,7 +282,7 @@ const AuthForm = ({ type }: { type: FormType }) => {
                 <button
                   type="button"
                   onClick={handleResendOTP}
-                  className="text-sm text-gray-500 hover:text-user-primary transition-colors"
+                  className="text-sm text-gray-500 hover:text-primary transition-colors"
                 >
                   Didn't receive a code? Resend
                 </button>
@@ -296,7 +296,7 @@ const AuthForm = ({ type }: { type: FormType }) => {
             {view === "sign-in" ? "No account yet?" : "Have an account already?"}
             <button
               onClick={() => setView(view === "sign-in" ? "sign-up" : "sign-in")}
-              className="font-bold text-user-primary ml-1 hover:underline"
+              className="font-bold text-primary ml-1 hover:underline"
             >
               {view === "sign-in" ? "Sign Up" : "Sign In"}
             </button>
@@ -306,7 +306,7 @@ const AuthForm = ({ type }: { type: FormType }) => {
         {view !== "sign-in" && view !== "sign-up" && (
           <button
             onClick={() => setView("sign-in")}
-            className="text-center text-sm text-gray-500 hover:text-user-primary hover:underline"
+            className="text-center text-sm text-gray-500 hover:text-primary hover:underline"
           >
             ← Back to Sign In
           </button>
