@@ -4,6 +4,7 @@ import { generateObject } from "ai";
 import { google } from "@ai-sdk/google";
 import { z } from "zod";
 
+import { revalidatePath } from "next/cache";
 import dbConnect from "@/lib/db";
 import InterviewModel from "@/lib/models/Interview";
 import FeedbackModel from "@/lib/models/Feedback";
@@ -39,7 +40,7 @@ export async function createFeedback(params: CreateFeedbackParams) {
         - **Confidence & Clarity**: Confidence in responses, engagement, and clarity.
         `,
       system:
-        "You are a professional interviewer analyzing a mock interview. Your task is to evaluate the candidate based on structured categories.Your task is to evaluate. If there are no strengths found then tell it.Don't request anything from user, Just give the feedback.",
+        "You are a professional interviewer analyzing a mock interview. Your task is to evaluate the candidate based on structured categories.Your task is to evaluate. Remember always, If there are no strengths found then tell it.Don't request anything from user, Just give the feedback,You are an AI.",
     });
 
     await dbConnect();
@@ -100,6 +101,30 @@ export async function createFeedback(params: CreateFeedbackParams) {
   } catch (error) {
     console.error("Error saving feedback:", error);
     return { success: false };
+  }
+}
+
+export async function deleteInterview(formData: FormData) {
+  const interviewId = formData.get("interviewId") as string;
+  const userId = formData.get("userId") as string;
+  const feedbackId = formData.get("feedbackId") as string;
+  if (!interviewId || !userId) return { success: false, message: "Missing parameters" };
+  try {
+    await dbConnect();
+    if (feedbackId) {
+      await FeedbackModel.findByIdAndDelete(feedbackId);
+    } else {
+      await FeedbackModel.deleteMany({ interviewId, userId });
+    }
+    const interview = await InterviewModel.findById(interviewId);
+    if (interview && interview.userId.toString() === userId) {
+      await InterviewModel.findByIdAndDelete(interviewId);
+    }
+    revalidatePath("/");
+    return { success: true };
+  } catch (error) {
+    console.error("Error deleting interview:", error);
+    return { success: false, message: "Failed to delete interview" };
   }
 }
 

@@ -89,8 +89,8 @@
   --dark-300: #e1e0e6;
   --dark-400: #d6d5dc;
 
-  --gradient-card: linear-gradient(to bottom, #f8f7fc, #eeedf3);
-  --gradient-blue-dark: linear-gradient(to bottom, #edeaff, #f5f3ff);
+  --gradient-card: linear-gradient(to bottom, #2b2b4f, #1f1f3a);
+  --gradient-blue-dark: linear-gradient(to bottom, #8a7df5, #b5aaff);
   --gradient-border: linear-gradient(to bottom, #d6d5dc, #d6d5dc33);
   --glass-bg: rgba(255, 255, 255, 0.7);
   --glass-border: rgba(0, 0, 0, 0.06);

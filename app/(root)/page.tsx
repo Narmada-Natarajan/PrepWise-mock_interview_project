@@ -26,8 +26,8 @@ async function Home() {
     <>
       <section className="card-cta">
         <div className="flex flex-col gap-6 max-w-lg">
-          <h2>Get Interview-Ready with AI-Powered Practice & Feedback</h2>
-          <p className="text-lg">
+          <h2 className="text-white">Get Interview-Ready with AI-Powered Practice & Feedback</h2>
+          <p className="text-lg text-white/80">
             Practice real interview questions & get instant feedback
           </p>
 
@@ -54,6 +54,7 @@ async function Home() {
               <InterviewCard
                 key={interview.id}
                 userId={user?.id}
+                interviewUserId={interview.userId}
                 interviewId={interview.id}
                 role={interview.role}
                 description={interview.description}
@@ -81,6 +82,7 @@ async function Home() {
               <InterviewCard
                 key={interview.id}
                 userId={user?.id}
+                interviewUserId={interview.userId}
                 interviewId={interview.id}
                 role={interview.role}
                 description={interview.description}

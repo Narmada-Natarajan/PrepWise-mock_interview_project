@@ -1,16 +1,18 @@
 import dayjs from "dayjs";
 import Link from "next/link";
 import Image from "next/image";
+import { Trash2 } from "lucide-react";
 
 import { Button } from "./ui/button";
 import DisplayTechIcons from "./DisplayTechIcons";
 
 import { cn, getRandomInterviewCover } from "@/lib/utils";
-import { getFeedbackByInterviewId } from "@/lib/actions/general.action";
+import { getFeedbackByInterviewId, deleteInterview } from "@/lib/actions/general.action";
 
 const InterviewCard = async ({
   interviewId,
   userId,
+  interviewUserId,
   role,
   description,
   isPublic,
@@ -64,7 +66,7 @@ const InterviewCard = async ({
           </div>
 
           {/* Interview Role */}
-          <h3 className="mt-5 capitalize">{role} Interview</h3>
+          <h3 className="mt-5 capitalize text-white">{role} Interview</h3>
 
           {/* Date & Score */}
           <div className="flex flex-row gap-5 mt-3">
@@ -100,8 +102,24 @@ const InterviewCard = async ({
           )}
         </div>
 
-        <div className="flex flex-row justify-between">
-          <DisplayTechIcons techStack={techstack} />
+        <div className="flex flex-row justify-between items-center">
+          <div className="flex items-center gap-2">
+            {feedback && interviewId && (
+              <form action={deleteInterview}>
+                <input type="hidden" name="interviewId" value={interviewId} />
+                <input type="hidden" name="userId" value={userId} />
+                <input type="hidden" name="feedbackId" value={feedback.id} />
+                <button
+                  type="submit"
+                  className="flex items-center justify-center size-9 rounded-xl bg-white/10 hover:bg-destructive/80 backdrop-blur-sm transition-all cursor-pointer hover:scale-105 active:scale-95"
+                  title="Delete past interview"
+                >
+                  <Trash2 className="w-4 h-4 text-white/70 hover:text-white" />
+                </button>
+              </form>
+            )}
+            <DisplayTechIcons techStack={techstack} />
+          </div>
 
           <Button className="btn-primary">
             <Link

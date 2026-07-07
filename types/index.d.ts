@@ -48,6 +48,7 @@ interface User {
 interface InterviewCardProps {
   interviewId?: string;
   userId?: string;
+  interviewUserId?: string;
   role: string;
   description?: string;
   isPublic?: boolean;

@@ -207,7 +207,6 @@ const Agent = ({
 
   const getMediaPermissions = async () => {
     try {
-      // 1. Camera & Mic with Echo Cancellation
       const stream = await navigator.mediaDevices.getUserMedia({ 
         video: true, 
         audio: {
@@ -218,32 +217,48 @@ const Agent = ({
       });
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
-        videoRef.current.muted = true; // CRITICAL: Mute local preview to prevent echo
+        videoRef.current.muted = true;
       }
-
-      // 2. Screenshare
-      // const screenStream = await navigator.mediaDevices.getDisplayMedia({ video: true });
-      // if (screenRef.current) {
-      //   screenRef.current.srcObject = screenStream;
-      //   screenRef.current.muted = true; // CRITICAL: Mute local preview to prevent echo
-      // }
-
       return true;
     } catch (error) {
       console.error(error);
-      toast.error("Please provide camera, microphone, and screen-sharing permissions to proceed.");
+      toast.error("Camera and microphone access is required to proceed.");
       return false;
     }
   };
 
+  const startScreenShare = async () => {
+    if (typeof MediaSource === "undefined" && typeof MediaStream === "undefined") return;
+    try {
+      const screenStream = await navigator.mediaDevices.getDisplayMedia({
+        video: { cursor: "always", displaySurface: "monitor" },
+        audio: false,
+      });
+      if (screenRef.current) {
+        screenRef.current.srcObject = screenStream;
+        screenRef.current.muted = true;
+        await screenRef.current.play();
+      }
+      screenStream.getVideoTracks()[0]?.addEventListener("ended", () => {
+        if (screenRef.current) {
+          screenRef.current.srcObject = null;
+        }
+      });
+    } catch (error: any) {
+      if (error.name === "NotAllowedError" || error.name === "NotSupportedError") {
+        console.log("Screen share cancelled or not supported");
+      } else {
+        console.error("Screen share error:", error);
+      }
+    }
+  };
+
   const handleCall = async () => {
-    // Trigger fullscreen directly on user gesture
-   //enterFullscreen();
-    
     const hasPermission = await getMediaPermissions();
     if (!hasPermission) return;
 
     setCallStatus(CallStatus.CONNECTING);
+    startScreenShare();
 
     let formattedQuestions = "";
     if (questions) {
@@ -280,25 +295,25 @@ const Agent = ({
           </div>
 
           <div className="w-full space-y-4 text-left px-8">
-             <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
+             <div className="h-1.5 w-full bg-muted/30 rounded-full overflow-hidden">
                 <div className="h-full bg-primary animate-pulse-slow rounded-full w-2/3" />
              </div>
           </div>
 
           {/* Email Notification Sidebar-style Card */}
-          <div className="w-full max-w-sm bg-white/5 border border-white/10 rounded-3xl p-5 flex items-center justify-between group hover:bg-white/[0.08] transition-all shadow-xl backdrop-blur-md">
+          <div className="w-full max-w-sm glassmorphism rounded-3xl p-5 flex items-center justify-between group transition-all shadow-xl">
             <div className="flex items-center gap-3">
               <div className="h-10 w-10 rounded-2xl bg-primary/10 flex items-center justify-center">
                 <Mail className="w-5 h-5 text-primary" />
               </div>
               <div className="flex flex-col text-left">
-                <span className="font-bold text-white text-sm">Email Results</span>
+                <span className="font-bold text-foreground text-sm">Email Results</span>
                 <span className="text-[10px] text-muted-foreground">Receive PDF report</span>
               </div>
             </div>
             
             <div className="flex items-center gap-4">
-              <div className="h-8 w-px bg-white/10" />
+              <div className="h-8 w-px bg-border" />
               <Checkbox 
                 checked={receiveNotifications} 
                 className="h-5 w-5 rounded-md border-2 border-primary/20"
@@ -312,7 +327,7 @@ const Agent = ({
             </div>
           </div>
 
-          <p className="text-[10px] uppercase tracking-[0.2em] font-black text-white/20 animate-pulse">
+          <p className="text-[10px] uppercase tracking-[0.2em] font-black text-foreground/20 animate-pulse">
             Generating expert report...
           </p>
         </div>
@@ -383,14 +398,15 @@ const Agent = ({
         <div className="col-span-8 relative group rounded-[32px] overflow-hidden blue-gradient-dark border border-white/5 flex flex-col items-center justify-center">
            <div className={cn("avatar transition-all duration-700", isSpeaking ? "scale-110" : "scale-100")}>
             <Image
-              src="/ai-avatar.png"
+              src="https://api.dicebear.com/9.x/adventurer/png?seed=interviewer_girl&flip=true&size=300"
               alt="Interviewer"
               width={180}
               height={180}
               className="z-20 object-cover rounded-full shadow-2xl relative"
             />
             {isSpeaking && (
-               <div className="absolute inset-0 flex items-center justify-center">
+              <>
+                <div className="absolute inset-0 flex items-center justify-center">
                   {[...Array(3)].map((_, i) => (
                     <div
                       key={i}
@@ -403,7 +419,20 @@ const Agent = ({
                       }}
                     />
                   ))}
-               </div>
+                </div>
+                <div className="absolute bottom-[18%] left-1/2 -translate-x-1/2 flex items-end justify-center gap-[3px] z-30">
+                  {[1, 2, 3].map((i) => (
+                    <div
+                      key={i}
+                      className="w-[5px] bg-white rounded-full transition-all duration-75"
+                      style={{
+                        height: `${6 + volume * 100 * (0.6 + i * 0.2)}px`,
+                        opacity: 0.3 + volume * 0.7,
+                      }}
+                    />
+                  ))}
+                </div>
+              </>
             )}
           </div>
           <h3 className="mt-8 text-2xl font-black gradient-text uppercase tracking-tighter">AI Interviewer</h3>
@@ -430,8 +459,15 @@ const Agent = ({
             </div>
           </div>
           
-          <div className="flex-1 relative rounded-3xl overflow-hidden bg-dark-100/50 border border-white/5 shadow-xl">
-            <video ref={screenRef} autoPlay playsInline muted className="w-full h-full object-cover" />
+          <div className="flex-1 relative rounded-3xl overflow-hidden bg-dark-100/50 border border-white/5 shadow-xl min-h-[120px]">
+            <video
+              ref={screenRef}
+              autoPlay
+              playsInline
+              muted
+              className="w-full h-full object-cover"
+              onLoadedMetadata={() => screenRef.current?.play()}
+            />
             <div className="absolute bottom-4 left-4 p-2 bg-black/60 backdrop-blur-md rounded-xl text-white text-[10px] uppercase font-black flex items-center gap-2">
               <Monitor className="w-3 h-3 text-primary" /> My Screen
             </div>
