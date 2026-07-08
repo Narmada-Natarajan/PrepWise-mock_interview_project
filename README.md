@@ -20,6 +20,7 @@ Practice real-time AI voice interviews, receive personalized feedback, and impro
 
 PrepWise is an AI-powered interview preparation platform that simulates real interview experiences through voice conversations. Users can generate personalized interviews, interact with an AI interviewer, and receive detailed performance feedback to strengthen their technical and communication skills.
 
+Project: 🔗https://prepwise-eosin-phi.vercel.app/sign-in
 ---
 
 ## ✨ Features
@@ -118,18 +119,7 @@ Open your browser and visit:
 http://localhost:3000
 ```
 
----
-
-## 📸 Screenshots
-
-<img width="1566" height="748" alt="image" src="https://github.com/user-attachments/assets/980ad251-650a-4349-a240-6df7415dd50d" />
-<img width="1453" height="741" alt="image" src="https://github.com/user-attachments/assets/5f1d5502-b913-428c-a798-ad335eb51553" />
-<img width="1271" height="637" alt="image" src="https://github.com/user-attachments/assets/dafbb168-0014-458c-96e1-5902cd1fa0e6" />
-<img width="1163" height="822" alt="image" src="https://github.com/user-attachments/assets/59171a1a-74b0-4456-b60c-b2dbedaf92ae" />
-
----
-
-## 👨‍💻 Author
+## 👨‍💻 Built By
 
 **Narmada Natarajan**
 
