@@ -229,7 +229,7 @@ export async function generateInterviewQuestions(params: {
   try {
     const { object } = await generateObject({
       model: google("gemini-flash-latest", {
-        structuredOutputs: false,
+        structuredOutputs: true,
       }),
       schema: z.object({
         questions: z.array(z.string()).min(5).max(7),

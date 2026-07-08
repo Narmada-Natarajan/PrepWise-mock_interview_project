@@ -4,7 +4,7 @@ import Image from "next/image";
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
-import { Video, Mic, Monitor, AlertTriangle, ShieldCheck, XCircle } from "lucide-react";
+import { Video, Mic, AlertTriangle, ShieldCheck, XCircle } from "lucide-react";
 
 import { cn } from "@/lib/utils";
 import { vapi } from "@/lib/vapi.sdk";
@@ -52,7 +52,6 @@ const Agent = ({
 
   // --- Media elements ---
   const videoRef = useRef<HTMLVideoElement>(null);
-  const screenRef = useRef<HTMLVideoElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -185,14 +184,11 @@ const Agent = ({
   };
 
   const stopMedia = () => {
-    [videoRef, screenRef].forEach((ref) => {
-      if (ref.current && ref.current.srcObject) {
-         const stream = ref.current.srcObject as MediaStream;
-         stream.getTracks().forEach((track) => track.stop());
-         ref.current.srcObject = null;
-
-      }
-    });
+    if (videoRef.current && videoRef.current.srcObject) {
+      const stream = videoRef.current.srcObject as MediaStream;
+      stream.getTracks().forEach((track) => track.stop());
+      videoRef.current.srcObject = null;
+    }
   };
 
   const handleDisqualification = () => {
@@ -227,38 +223,11 @@ const Agent = ({
     }
   };
 
-  const startScreenShare = async () => {
-    if (typeof MediaSource === "undefined" && typeof MediaStream === "undefined") return;
-    try {
-      const screenStream = await navigator.mediaDevices.getDisplayMedia({
-        video: { cursor: "always", displaySurface: "monitor" },
-        audio: false,
-      });
-      if (screenRef.current) {
-        screenRef.current.srcObject = screenStream;
-        screenRef.current.muted = true;
-        await screenRef.current.play();
-      }
-      screenStream.getVideoTracks()[0]?.addEventListener("ended", () => {
-        if (screenRef.current) {
-          screenRef.current.srcObject = null;
-        }
-      });
-    } catch (error: any) {
-      if (error.name === "NotAllowedError" || error.name === "NotSupportedError") {
-        console.log("Screen share cancelled or not supported");
-      } else {
-        console.error("Screen share error:", error);
-      }
-    }
-  };
-
   const handleCall = async () => {
     const hasPermission = await getMediaPermissions();
     if (!hasPermission) return;
 
     setCallStatus(CallStatus.CONNECTING);
-    startScreenShare();
 
     let formattedQuestions = "";
     if (questions) {
@@ -398,11 +367,12 @@ const Agent = ({
         <div className="col-span-8 relative group rounded-[32px] overflow-hidden blue-gradient-dark border border-white/5 flex flex-col items-center justify-center">
            <div className={cn("avatar transition-all duration-700", isSpeaking ? "scale-110" : "scale-100")}>
             <Image
-              src="https://api.dicebear.com/9.x/adventurer/png?seed=interviewer_girl&flip=true&size=300"
+              src="https://api.dicebear.com/9.x/lorelei/png?seed=InterviewerGirl&size=300"
               alt="Interviewer"
               width={180}
               height={180}
               className="z-20 object-cover rounded-full shadow-2xl relative"
+              unoptimized
             />
             {isSpeaking && (
               <>
@@ -450,26 +420,12 @@ const Agent = ({
           </div>
         </div>
 
-        {/* User Feeds (Sidebar Style) */}
-        <div className="col-span-4 flex flex-col gap-4 min-h-0">
-          <div className="flex-1 relative rounded-3xl overflow-hidden bg-dark-100/50 border border-white/5 shadow-xl">
+        {/* User Feed (Sidebar Style) */}
+        <div className="col-span-4 min-h-0">
+          <div className="h-full relative rounded-3xl overflow-hidden bg-dark-100/50 border border-white/5 shadow-xl">
             <video ref={videoRef} autoPlay playsInline muted className="w-full h-full object-cover mirror" />
             <div className="absolute bottom-4 left-4 p-2 bg-black/60 backdrop-blur-md rounded-xl text-white text-[10px] uppercase font-black flex items-center gap-2">
               <Video className="w-3 h-3 text-success-100" /> My Camera
-            </div>
-          </div>
-          
-          <div className="flex-1 relative rounded-3xl overflow-hidden bg-dark-100/50 border border-white/5 shadow-xl min-h-[120px]">
-            <video
-              ref={screenRef}
-              autoPlay
-              playsInline
-              muted
-              className="w-full h-full object-cover"
-              onLoadedMetadata={() => screenRef.current?.play()}
-            />
-            <div className="absolute bottom-4 left-4 p-2 bg-black/60 backdrop-blur-md rounded-xl text-white text-[10px] uppercase font-black flex items-center gap-2">
-              <Monitor className="w-3 h-3 text-primary" /> My Screen
             </div>
           </div>
         </div>

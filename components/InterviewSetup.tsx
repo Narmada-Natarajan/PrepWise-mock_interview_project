@@ -22,11 +22,10 @@ export default function InterviewSetup({ onComplete }: InterviewSetupProps) {
   const [showTimer, setShowTimer] = useState(false);
   const [timeLeft, setTimeLeft] = useState(15);
   const [generatedData, setGeneratedData] = useState<{ questions: string[], jd: string, level: string } | null>(null);
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.jd || !formData.description) {
-      toast.error("Please fill in all fields.");
+    if (!formData.jd) {
+      toast.error("Please enter a job role.");
       return;
     }
 
@@ -114,15 +113,57 @@ export default function InterviewSetup({ onComplete }: InterviewSetupProps) {
         <div className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="jd" className="text-sm font-semibold uppercase tracking-wider text-foreground/70 dark:text-muted-foreground ml-1">
-              Job Description / Role Title
+              Job Role
             </Label>
-            <Input
-              id="jd"
-              placeholder="e.g. Senior Frontend Developer at Google"
-              value={formData.jd}
-              onChange={(e) => setFormData({ ...formData, jd: e.target.value })}
-              className="bg-card/30 rounded-xl border-foreground/10 dark:border-white/10 h-12"
-            />
+            <div className="relative">
+              <select
+                id="jd"
+                value={formData.jd}
+                onChange={(e) => setFormData({ ...formData, jd: e.target.value })}
+                className="w-full bg-card rounded-xl border border-border h-12 pl-4 pr-10 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring/30 transition-all appearance-none cursor-pointer"
+              >
+                <option value="" disabled>Select a role...</option>
+                <option value="Frontend Developer">Frontend Developer</option>
+                <option value="Backend Developer">Backend Developer</option>
+                <option value="Full Stack Developer">Full Stack Developer</option>
+                <option value="Software Engineer">Software Engineer</option>
+                <option value="Senior Software Engineer">Senior Software Engineer</option>
+                <option value="Staff Software Engineer">Staff Software Engineer</option>
+                <option value="Principal Engineer">Principal Engineer</option>
+                <option value="Engineering Manager">Engineering Manager</option>
+                <option value="Tech Lead">Tech Lead</option>
+                <option value="DevOps Engineer">DevOps Engineer</option>
+                <option value="Site Reliability Engineer">Site Reliability Engineer</option>
+                <option value="Cloud Architect">Cloud Architect</option>
+                <option value="Data Scientist">Data Scientist</option>
+                <option value="Data Engineer">Data Engineer</option>
+                <option value="Machine Learning Engineer">Machine Learning Engineer</option>
+                <option value="AI Engineer">AI Engineer</option>
+                <option value="Product Manager">Product Manager</option>
+                <option value="Product Designer">Product Designer</option>
+                <option value="UI/UX Designer">UI/UX Designer</option>
+                <option value="Mobile Developer">Mobile Developer</option>
+                <option value="iOS Developer">iOS Developer</option>
+                <option value="Android Developer">Android Developer</option>
+                <option value="React Native Developer">React Native Developer</option>
+                <option value="QA Engineer">QA Engineer</option>
+                <option value="Security Engineer">Security Engineer</option>
+                <option value="Systems Engineer">Systems Engineer</option>
+                <option value="Database Administrator">Database Administrator</option>
+                <option value="Network Engineer">Network Engineer</option>
+                <option value="Solutions Architect">Solutions Architect</option>
+                <option value="Technical Writer">Technical Writer</option>
+                <option value="Scrum Master">Scrum Master</option>
+                <option value="Project Manager">Project Manager</option>
+                <option value="Business Analyst">Business Analyst</option>
+                <option value="Data Analyst">Data Analyst</option>
+                <option value="Research Scientist">Research Scientist</option>
+              </select>
+              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
+                <svg className="h-4 w-4 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+              </div>
+            </div>
+            <p className="text-[11px] text-muted-foreground ml-1">Pick a role or describe a custom one in Additional Details</p>
           </div>
 
           <div className="space-y-2">
@@ -134,7 +175,7 @@ export default function InterviewSetup({ onComplete }: InterviewSetupProps) {
               placeholder="e.g. Focus on React, Next.js, and system design..."
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              className="w-full min-h-[120px] bg-card/30 rounded-xl border border-foreground/10 dark:border-white/10 p-4 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all custom-scrollbar"
+              className="w-full min-h-[120px] bg-card rounded-xl border border-border p-4 text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-ring/30 transition-all custom-scrollbar"
             />
           </div>
 
@@ -143,35 +184,45 @@ export default function InterviewSetup({ onComplete }: InterviewSetupProps) {
               <Label className="text-sm font-semibold uppercase tracking-wider text-foreground/70 dark:text-muted-foreground ml-1">
                 Interview Language
               </Label>
-              <select
-                value={formData.language}
-                onChange={(e) => setFormData({ ...formData, language: e.target.value })}
-                className="w-full bg-card/30 rounded-xl border border-foreground/10 dark:border-white/10 h-12 px-4 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all appearance-none"
-              >
-                <option value="English">English</option>
-                <option value="Spanish">Spanish</option>
-                <option value="French">French</option>
-                <option value="German">German</option>
-                <option value="Hindi">Hindi</option>
-                <option value="Chinese">Chinese</option>
-              </select>
+              <div className="relative">
+                <select
+                  value={formData.language}
+                  onChange={(e) => setFormData({ ...formData, language: e.target.value })}
+                  className="w-full bg-card rounded-xl border border-border h-12 pl-4 pr-10 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring/30 transition-all appearance-none cursor-pointer"
+                >
+                  <option value="English">English</option>
+                  <option value="Spanish">Spanish</option>
+                  <option value="French">French</option>
+                  <option value="German">German</option>
+                  <option value="Hindi">Hindi</option>
+                  <option value="Chinese">Chinese</option>
+                </select>
+                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
+                  <svg className="h-4 w-4 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+                </div>
+              </div>
             </div>
 
             <div className="space-y-2">
               <Label className="text-sm font-semibold uppercase tracking-wider text-foreground/70 dark:text-muted-foreground ml-1">
                 Experience Level
               </Label>
-              <select
-                value={formData.level}
-                onChange={(e) => setFormData({ ...formData, level: e.target.value })}
-                className="w-full bg-card/30 rounded-xl border border-foreground/10 dark:border-white/10 h-12 px-4 text-sm focus:outline-none focus:ring-2 focus:ring-primary/20 transition-all appearance-none"
-              >
-                <option value="Intern">Intern</option>
-                <option value="Junior">Junior</option>
-                <option value="Middle">Middle</option>
-                <option value="Senior">Senior</option>
-                <option value="Team Lead">Team Lead</option>
-              </select>
+              <div className="relative">
+                <select
+                  value={formData.level}
+                  onChange={(e) => setFormData({ ...formData, level: e.target.value })}
+                  className="w-full bg-card rounded-xl border border-border h-12 pl-4 pr-10 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-ring/30 transition-all appearance-none cursor-pointer"
+                >
+                  <option value="Intern">Intern</option>
+                  <option value="Junior">Junior</option>
+                  <option value="Middle">Middle</option>
+                  <option value="Senior">Senior</option>
+                  <option value="Team Lead">Team Lead</option>
+                </select>
+                <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
+                  <svg className="h-4 w-4 text-muted-foreground" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" /></svg>
+                </div>
+              </div>
             </div>
           </div>
         </div>
